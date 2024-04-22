@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,7 +21,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject rightAnswerUI;
     [SerializeField] private GameObject wrongAnswerUI;
-    [SerializeField] private TextMeshProUGUI rightAnsweredText;
+    [SerializeField] private GameObject winUI;
+    [SerializeField] private GameObject loseUI;
+    [SerializeField] private TextMeshProUGUI currentLevelText;
 
     public List<int> remainingQuestion;
     public int currentQuestion; 
@@ -56,10 +59,11 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        rightAnsweredText.text = "Trả lời đúng: " + rightAnswered;
+        currentLevelText.text = "Level hiện tại: " + PlayerController.Instance.currentPoint;
     }
     public void SetNewQuestion()
     {
+        AudioManager.instance.PlayBGM(1);
         questionUI.SetActive(true);
         int rdQues = Random.Range(0, remainingQuestion.Count);
         questionText.text = QuestionManager.Instance.questions[remainingQuestion[rdQues]];
@@ -106,17 +110,23 @@ public class GameManager : MonoBehaviour
     {
         tutorialUI.SetActive(false);
         PlayerController.Instance.GoOn();
+        AudioManager.instance.StopAllBGM();
     }
 
     public void Answer(int answerNum)
     {
+        AudioManager.instance.StopAllBGM();
         questionUI.SetActive(false);
         if (answerNum == currentAnswer)
         {
             PlayerController.Instance.anim.SetTrigger("Victory");
+            AudioManager.instance.PlaySFX(0);
         }
         else
+        {
+            AudioManager.instance.PlaySFX(1);
             PlayerController.Instance.anim.SetTrigger("Fail");
+        }
     }
     public void SetActiveRightAnswerUI()
     {
@@ -129,6 +139,11 @@ public class GameManager : MonoBehaviour
     public void GoOnAndPlusAnsweredNum()
     {
         rightAnswerUI.SetActive(false);
+        if(PlayerController.Instance.currentPoint == 10)
+        {
+            SetWinGame();
+            return;
+        }
         PlayerController.Instance.GoOn();
         if (GameManager.Instance.rightAnswered < 10)
             GameManager.Instance.rightAnswered++;
@@ -136,11 +151,32 @@ public class GameManager : MonoBehaviour
     public void GoBackAndSubtractAnsweredNum()
     {
         wrongAnswerUI.SetActive(false);
-        if (rightAnswered > 0)
+        if(remainingQuestion.Count==0)
+        {
+            SetEndGame();
+            return;
+        }
+        if (PlayerController.Instance.currentPoint > 0)
             PlayerController.Instance.GoBack();
         else
             SetNewQuestion();
         if (GameManager.Instance.rightAnswered > 0)
             GameManager.Instance.rightAnswered--;
+    }
+    public void SetWinGame()
+    {
+        winUI.SetActive(true);
+    }
+    public void SetEndGame()
+    {
+        loseUI.SetActive(true);
+    }
+    public void Replay()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }

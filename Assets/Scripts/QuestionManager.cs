@@ -14,9 +14,6 @@ public class QuestionManager : MonoBehaviour
             Destroy(gameObject);
         else
             Instance = this;
-    }
-    private void Start()
-    {
         questions.Add("Đâu là một loại hình chợ tạm tự phát thường xuất hiện trong các khu dân cư?"); //1
         questions.Add("Đâu là tên một bãi biển ở Quảng Bình?"); //2
         questions.Add("Haiku là thể thơ truyền thống của nước nào?"); //3
@@ -71,6 +68,9 @@ public class QuestionManager : MonoBehaviour
         answers.Add(22, "Vịt đực/Thiên nga/Ngan xiêm/Ngỗng");
         answers.Add(23, "Bến Tre/Tiền Giang/Cà Mau/Đồng Tháp");
         answers.Add(24, "Nghệ/Giềng/Hành tây/Gừng");
+    }
+    private void Start()
+    {
     }
     
     void Update()

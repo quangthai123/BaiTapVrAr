@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed;
     [SerializeField] private float smoothRotateTime;
     private List<Transform> wayPoints;
-    private int currentPoint = 0;
+    public int currentPoint = 0;
     private bool isMoving = false;
     private bool isBacking = false;
     void Awake()
